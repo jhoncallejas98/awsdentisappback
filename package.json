@@ -2,11 +2,10 @@
   "name": "dentisapp-backend",
   "version": "1.0.0",
   "description": "Rest API para web de Dentisapp",
-  "main": "index.js",
+  "main": "index.mjs",
   "type": "module",
   "scripts": {
     "dev": "node --watch ./src/index.mjs"
-
   },
   "keywords": [
     "express",
@@ -20,6 +19,9 @@
   "author": "Jhon Callejas Villarreal <jhoncallejas1998@hotmail.com>",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0"
+    "bcrypt": "^6.0.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.0"
   }
 }
