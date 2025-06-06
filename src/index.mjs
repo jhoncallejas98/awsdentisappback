@@ -8,6 +8,8 @@ import appoiment from  './routes/appoiment.route.mjs'
 import Users from './routes/users.route.mjs'
 import auth from './routes/auth.router.mjs'; // importamos la ruta de autenticacion
 import formulacionMedica from './routes/formulacion-medica.route.mjs'
+import historiaClinica from './routes/historia-clinica.route.mjs'
+
 
 // Paso 2: Ejecutar express
 const app = express();
@@ -21,6 +23,7 @@ app.use(disponibilidad); // implementar ruta de disponibilidad.
 app.use(Users) // implementamos usuarios 
 app.use(auth); // implementamos autenticacion
 app.use(formulacionMedica);
+app.use(historiaClinica);
 //invocar la cofiguracion de la conexion a la base de datos. 
 dbConnect();
 
