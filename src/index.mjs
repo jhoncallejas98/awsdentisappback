@@ -7,7 +7,7 @@ import dbConnect from './config/mongo.config.mjs'; // importamos la conexion a l
 import appoiment from  './routes/appoiment.route.mjs'
 import Users from './routes/users.route.mjs'
 import auth from './routes/auth.router.mjs'; // importamos la ruta de autenticacion
-
+import historiaClinica from './routes/historia-clinica.route.mjs'
 
 // Paso 2: Ejecutar express
 const app = express();
@@ -20,6 +20,7 @@ app.use(appoiment); // implementa la ruta de appoiment.
 app.use(disponibilidad); // implementar ruta de disponibilidad.
 app.use(Users) // implementamos usuarios 
 app.use(auth); // implementamos autenticacion
+app.use(historiaClinica);
 //invocar la cofiguracion de la conexion a la base de datos. 
 dbConnect();
 
