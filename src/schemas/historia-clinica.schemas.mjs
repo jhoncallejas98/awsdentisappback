@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 const historiaClinicaSchema = new mongoose.Schema({
     name: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,   
+        ref: 'User', // Referencia al modelo de usuario
         required: [true, "El nombre del paciente es obligatorio"],
         trim: true,
     },

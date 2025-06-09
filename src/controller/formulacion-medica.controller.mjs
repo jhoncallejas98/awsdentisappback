@@ -20,7 +20,7 @@ const createFormulacionMedica = async (req, res) => {
 
 const getAllFormulacionesMedicas = async (req, res) => {
     try {
-        const data = await formulacionMedicaModel.find({});
+        const data = await formulacionMedicaModel.find({}).populate(['name']);
         res.json(data);
     } catch (error) {
         console.error(error);
@@ -32,7 +32,7 @@ const getFormulacionMedicaById = async (req, res) => {
     const id = req.params.id;
 
     try {
-        const data = await formulacionMedicaModel.findById(id);
+        const data = await formulacionMedicaModel.findById(id).populate(['name']);
 
         if (!data) {
             return res.status(404).json({ msg: "La formulación médica no fue encontrada." });

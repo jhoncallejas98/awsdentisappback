@@ -20,8 +20,8 @@ const usersSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["admin" ,"especialistas"],
-        default: "admin"
+        enum: ["user" ,"patiente"],
+        default: "user"
     },
 },{
     timestamps: true,
@@ -29,7 +29,7 @@ const usersSchema = new mongoose.Schema({
 });
 
 const userModel = mongoose.model(
-    "users",  //define el nombre de la coleccion donde se va a guardar los documentos
+    "User",  //define el nombre de la coleccion donde se va a guardar los documentos
     usersSchema
 ) ;   
 export default userModel;

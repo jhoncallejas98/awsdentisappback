@@ -13,6 +13,7 @@ import historiaClinica from './routes/historia-clinica.route.mjs'
 
 // Paso 2: Ejecutar express
 const app = express();
+const PORT = process.env.PORT || 3000; // Definimos el puerto de la aplicacion, si no existe en el entorno, se usa el 3000.
 // app.use(product); // implementar la ruta como un Middleware de express
 
 app.use( express.json() );
@@ -30,6 +31,6 @@ dbConnect();
 
 
 // Paso 4: Lanzar el servidor web en el puerto 3000
-app.listen(3000, () => {
+app.listen(PORT, () => {
     console.log('Servidor lanzado exitosamente ;)');
 });

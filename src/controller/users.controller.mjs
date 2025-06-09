@@ -7,7 +7,7 @@ const createUser = async ( req, res ) => {
     try {
         // Paso 1: Verificar si el usuario existe
         const userFound = await userModel.findOne({ 
-            username: inputData.username,
+            // username: inputData.username,
             email: inputData.email
         });
 

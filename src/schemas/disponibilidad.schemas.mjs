@@ -4,7 +4,8 @@ import mongoose from "mongoose";
 
 const disponibilidadSchema = new mongoose.Schema({
     odontologoId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,    
+        ref: 'User',
         required: true
     },
     diaSemana: {

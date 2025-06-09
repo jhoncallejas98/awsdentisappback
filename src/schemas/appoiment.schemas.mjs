@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
 const appointmentSchema = new mongoose.Schema({
-    patient: {
+    name: {
         type: mongoose.Schema.Types.ObjectId,    // El odontólogo debe ser un usuario con rol 'paciente'
-        ref: 'Patient',
+        ref: 'User', // Referencia al modelo de usuario
         required: [true, 'El ID del paciente es obligatorio para la cita.'],
         unique: true,
     },
