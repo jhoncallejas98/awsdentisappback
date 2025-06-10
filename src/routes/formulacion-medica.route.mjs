@@ -1,4 +1,5 @@
 import express from 'express';
+import { authUser } from '../middlewares/auth-user.middleware.mjs';
 
 import {
     createFormulacionMedica,
@@ -10,10 +11,10 @@ import {
 
 const router = express.Router();
 
-router.post('/api/formulacionMedica', createFormulacionMedica);
-router.get('/api/formulacionMedica', getAllFormulacionesMedicas);
-router.get('/api/formulacionMedica/:id', getFormulacionMedicaById);
-router.patch('/api/formulacionMedica/:id', updateFormulacionMedicaById);
-router.delete('/api/formulacionMedica/:id', removeFormulacionMedicaById);
+router.post('/api/formulacionMedica', authUser, createFormulacionMedica);
+router.get('/api/formulacionMedica', authUser, getAllFormulacionesMedicas);
+router.get('/api/formulacionMedica/:id', authUser, getFormulacionMedicaById);
+router.patch('/api/formulacionMedica/:id', authUser, updateFormulacionMedicaById);
+router.delete('/api/formulacionMedica/:id', authUser, removeFormulacionMedicaById);
 
 export default router;
