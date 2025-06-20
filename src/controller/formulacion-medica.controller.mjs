@@ -1,82 +1,88 @@
 import formulacionMedicaModel from "../schemas/formulacion-medica.schema.mjs";
 
+// Crear una formulación médica
 const createFormulacionMedica = async (req, res) => {
-    const inputData = req.body;
-
     try {
-        const formulacionExistente = await formulacionMedicaModel.findOne({ id: inputData.id });
-
-        if (formulacionExistente) {
-            return res.status(400).json({ msg: "Ya existe una formulación médica con ese ID." });
-        }
+        const inputData = req.body;
 
         const data = await formulacionMedicaModel.create(inputData);
         res.status(201).json(data);
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error: No se pudo crear la formulación médica." });
+        res.status(500).json({ msg: "Error al crear la formulación médica." });
     }
 };
 
+// Obtener todas las formulaciones médicas
 const getAllFormulacionesMedicas = async (req, res) => {
     try {
-        const data = await formulacionMedicaModel.find({}).populate(['name']);
-        res.json(data);
+        const data = await formulacionMedicaModel.find({})
+            .populate('name', 'name email role') // Trae info del usuario relacionado
+            .populate('odontologoId', 'name email role'); // Trae info del odontólogo
+
+        res.status(200).json(data);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error: No se pudieron obtener las formulaciones médicas." });
+        res.status(500).json({ msg: "Error al obtener las formulaciones médicas." });
     }
 };
 
+// Obtener formulación médica por ID
 const getFormulacionMedicaById = async (req, res) => {
-    const id = req.params.id;
-
     try {
-        const data = await formulacionMedicaModel.findById(id).populate(['name']);
+        const id = req.params.id;
+        const data = await formulacionMedicaModel.findById(id)
+            .populate('name', 'name email role')
+            .populate('odontologoId', 'name email role');
 
         if (!data) {
-            return res.status(404).json({ msg: "La formulación médica no fue encontrada." });
+            return res.status(404).json({ msg: "Formulación médica no encontrada." });
         }
 
-        res.json(data);
+        res.status(200).json(data);
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error: No se pudo obtener la formulación médica." });
+        res.status(500).json({ msg: "Error al obtener la formulación médica." });
     }
 };
 
+// Actualizar formulación médica por ID
 const updateFormulacionMedicaById = async (req, res) => {
-    const id = req.params.id;
-    const inputData = req.body;
-
     try {
+        const id = req.params.id;
+        const inputData = req.body;
+
         const data = await formulacionMedicaModel.findByIdAndUpdate(id, inputData, { new: true });
 
         if (!data) {
-            return res.status(404).json({ msg: "No se encontró la formulación médica para actualizar." });
+            return res.status(404).json({ msg: "Formulación médica no encontrada para actualizar." });
         }
 
-        res.json(data);
+        res.status(200).json(data);
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error: No se pudo actualizar la formulación médica." });
+        res.status(500).json({ msg: "Error al actualizar la formulación médica." });
     }
 };
 
+// Eliminar formulación médica por ID
 const removeFormulacionMedicaById = async (req, res) => {
-    const id = req.params.id;
-
     try {
+        const id = req.params.id;
         const data = await formulacionMedicaModel.findByIdAndDelete(id);
 
         if (!data) {
-            return res.status(404).json({ msg: "No se encontró la formulación médica para eliminar." });
+            return res.status(404).json({ msg: "Formulación médica no encontrada para eliminar." });
         }
 
-        res.json({ msg: "Formulación médica eliminada correctamente", data });
+        res.status(200).json({ msg: "Formulación médica eliminada correctamente", data });
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error: No se pudo eliminar la formulación médica." });
+        res.status(500).json({ msg: "Error al eliminar la formulación médica." });
     }
 };
 

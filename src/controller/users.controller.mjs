@@ -1,107 +1,101 @@
 import userModel from "../schemas/User.schema.mjs";
 import bcrypt from "bcrypt";
 
-const createUser = async ( req, res ) => {
+// Crear Usuario
+const createUser = async (req, res) => {
     const inputData = req.body;
 
     try {
-        // Paso 1: Verificar si el usuario existe
-        const userFound = await userModel.findOne({ 
-            // username: inputData.username,
-            email: inputData.email
-        });
-
-        if( userFound ) {
-            return res.status( 404 ).json({ msg: 'No pudo registrarse por que, el usuario ya existe.' });
+        // Verificar si el usuario existe por email
+        const userFound = await userModel.findOne({ email: inputData.email });
+        if (userFound) {
+            return res.status(400).json({ msg: 'El usuario ya existe con este correo.' });
         }
 
-        // Paso 2: Encriptar la contrasena
-           // Encriptar la contraseña
-        const salt = bcrypt.genSaltSync(10); // puedes usar 10 rondas como estándar
-        console.log('salt:', salt);
-
+        // Encriptar la contraseña
+        const salt = bcrypt.genSaltSync(10);
         const hashPassword = bcrypt.hashSync(inputData.password, salt);
-        console.log('hashPassword:', hashPassword);
-
         inputData.password = hashPassword;
 
-        // Registrar el usuario
-        // Paso 3: Registrar el usuario
-        const data = await userModel.create( inputData );
+        // Crear usuario
+        const newUser = await userModel.create(inputData);
+        res.status(201).json(newUser);
 
-        // Paso 4: Responder al cliente que se registro existosamente
-        res.status( 201 ).json( data );
-    } 
-    catch ( error ) {
-        console.error( error );
-        res.status( 500 ).json({ msg: 'Error: No se pudo crear el usuario' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Error: No se pudo crear el usuario.' });
     }
+};
 
-}
-
+// Obtener todos los usuarios
 const getAllUsers = async (req, res) => {
-
     try {
-        const data = await userModel.find({})
-        res.json(data);
-    }
-    catch (error) {
+        const users = await userModel.find({});
+        res.status(200).json(users);
+    } catch (error) {
         console.error(error);
-        res.json({ msg: "error: no se pudo optener el resultado de productos" })
+        res.status(500).json({ msg: 'Error al obtener los usuarios.' });
     }
-}
+};
 
+// Obtener usuario por ID
 const getUsersById = async (req, res) => {
-    const UsersId = req.params.id;
+    const userId = req.params.id;
     try {
-        const data = await userModel.findById(UsersId);
-
-        if (!data) {
-            return res.json({ msg: "el producto no se encuentra resgistrado" })
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ msg: 'Usuario no encontrado.' });
         }
-        res.json(data);
-    }
-    catch (error) {
+        res.json(user);
+    } catch (error) {
         console.error(error);
-        res.json({ msg: "error: no se pudo encontrar el producto" })
+        res.status(500).json({ msg: 'Error al obtener el usuario.' });
     }
-}
+};
 
-const removeUsersById = async (req, res) => {
-    try {
-    const productId = req.params.id;
-    const data = await userModel.findByIdAndDelete(productId);
-    if (!data) {
-        return res.json({ msg: "el producto no se encuentra resgistrado" })
-    }
-
-    res.json(data);
-    }
-
-    catch (error) {
-        console.error(error);
-        res.json({ msg: "error: no se pudo encontrar el producto" })
-    }
-}
-
+// Actualizar usuario por ID
 const updateUsersById = async (req, res) => {
-    try {
-    const usersId = req.params.id;
+    const userId = req.params.id;
     const inputData = req.body;
-    const data = await userModel.findByIdAndUpdate( usersId, inputData, {new:true}  );
-    
-    res.json( data );
+
+    try {
+        // Si viene password, encriptar nuevamente
+        if (inputData.password) {
+            const salt = bcrypt.genSaltSync(10);
+            inputData.password = bcrypt.hashSync(inputData.password, salt);
+        }
+
+        const updatedUser = await userModel.findByIdAndUpdate(userId, inputData, { new: true });
+        if (!updatedUser) {
+            return res.status(404).json({ msg: 'Usuario no encontrado para actualizar.' });
+        }
+
+        res.json(updatedUser);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Error al actualizar el usuario.' });
     }
-    catch ( error ) {
-        console.error( error )
-        res.json({msg: "no se pudo actualizar el usuario"})
+};
+
+// Eliminar usuario por ID
+const removeUsersById = async (req, res) => {
+    const userId = req.params.id;
+    try {
+        const deletedUser = await userModel.findByIdAndDelete(userId);
+        if (!deletedUser) {
+            return res.status(404).json({ msg: 'Usuario no encontrado para eliminar.' });
+        }
+        res.json({ msg: 'Usuario eliminado correctamente.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Error al eliminar el usuario.' });
     }
-}
+};
 
 export {
     createUser,
     getAllUsers,
     getUsersById,
-    removeUsersById,
-    updateUsersById
-}
+    updateUsersById,
+    removeUsersById
+};

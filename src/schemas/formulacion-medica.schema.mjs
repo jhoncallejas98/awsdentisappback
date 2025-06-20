@@ -1,44 +1,45 @@
 import mongoose from "mongoose";
 
 const formulacionMedicaSchema = new mongoose.Schema({
-  name: {
-      type: mongoose.Schema.Types.ObjectId,    
-      ref: 'User',
-      required: true
-  },
-  citaId: {
-    type: String
-  }, // FK a Cita
-  odontologoId: {
-    type: String
-  }, // FK a Usuario
-  fecha: {
-    type: Date
-  },
-  medicamento: {
-    type: String
-  },
-  dosis: {
-    type: String
-  },
-  frecuencia: {
-    type: String
-  }, // Ej: '2 veces al día'
-  duracionDias: {
-    type: Number
-  },
-  instrucciones: {
-    type: String
-  }
-},
-{
-  timestamps: true,
-  versionkey: false
-});
+    patient: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true 
+    },
+    appointment: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'appointments', 
+        required: true 
+    },
+    dentist: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true 
+    },
+    fecha: { 
+        type: Date, 
+        required: true 
+    },
+    medicamento: { 
+        type: String, 
+        required: [true, "El nombre del medicamento es obligatorio"]
+    },
+    dosis: { 
+        type: String, 
+        required: [true, "La dosis es obligatoria"]
+    },
+    frecuencia: { 
+        type: String, 
+        required: [true, "La frecuencia es obligatoria"] 
+    }, 
+    duracionDias: { 
+        type: Number, 
+        required: [true, "La duración en días es obligatoria"] 
+    },
+    instrucciones: { 
+        type: String 
+    }
+}, { timestamps: true, versionKey: false });
 
-const formulacionMedicaModel = mongoose.model(
-    'formulacion-medicas',
-    formulacionMedicaSchema
-);
-
+const formulacionMedicaModel = mongoose.model('formulacionesMedicas', formulacionMedicaSchema);
 export default formulacionMedicaModel;

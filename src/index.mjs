@@ -9,14 +9,15 @@ import Users from './routes/users.route.mjs'
 import auth from './routes/auth.router.mjs'; // importamos la ruta de autenticacion
 import formulacionMedica from './routes/formulacion-medica.route.mjs'
 import historiaClinica from './routes/historia-clinica.route.mjs'
-
-
+import cors from 'cors'; // Importamos cors para permitir peticiones desde el frontend
+import todayRouter from './routes/todayPatients.route.mjs';
 // Paso 2: Ejecutar express
 const app = express();
 const PORT = process.env.PORT || 3000; // Definimos el puerto de la aplicacion, si no existe en el entorno, se usa el 3000.
 // app.use(product); // implementar la ruta como un Middleware de express
 
 app.use( express.json() );
+app.use(cors()); // Usamos cors para permitir peticiones desde el frontend
 
 // app.use(product); // implementar la ruta como un Middleware de express
 app.use(appoiment); // implementa la ruta de appoiment. 
@@ -25,7 +26,7 @@ app.use(Users) // implementamos usuarios
 app.use(auth); // implementamos autenticacion
 app.use(formulacionMedica);
 app.use(historiaClinica);
-//invocar la cofiguracion de la conexion a la base de datos. 
+app.use(todayRouter);//invocar la cofiguracion de la conexion a la base de datos. 
 dbConnect();
 
 

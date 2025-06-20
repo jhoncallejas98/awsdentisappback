@@ -1,120 +1,127 @@
 import appointmentModel from "../schemas/appoiment.schemas.mjs";
+import userModel from "../schemas/User.schema.mjs";
+
+// Crear una nueva cita
+const createAppoiment = async (req, res) => {
+    const { patient, dentist, date, timeBlock, reason } = req.body;
+    // const patientFound = await userModel.findOne({ _id: patient, role: 'patiente' });
+    // const newAppoiment =  await appointmentModel.create({ patient, dentist, date, timeBlock, reason })
 
 
-const createAppoiment =  async (req, res)=> {
-    const inputData = req.body;
-    //controla las excepciones de la consulta.
+    // res.json(newAppoiment)
     try {
-        // antes de registrar verificar si es usuario existe
-        const patienteFound = await appointmentModel.findOne({patient: inputData.patient});
-        if (patienteFound){
-            return res.status(404).json({msg: "el usuario ya existe"})
+        // Verificar que el paciente exista
+        const patientFound = await userModel.findOne({ _id: patient, role: 'patient' });
+        if (!patientFound) {
+            return res.status(400).json({ msg: "Paciente no encontrado." });
         }
 
+        // Verificar que el dentista exista
+        const dentistFound = await userModel.findOne({ _id: dentist, role: 'dentist' });
+        if (!dentistFound) {
+            return res.status(400).json({ msg: "Dentista no encontrado." });
+        }
 
-        // paso 2: registrar al usarui
-        const registeredAppoiment =  await appointmentModel.create(inputData);
-        console.log(registeredAppoiment);
-        res.status(201).json(registeredAppoiment);
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({"msg": 'Error al registrar la cita'});
-    }
+        // Verificar si ya existe cita en ese bloque y fecha para ese dentista
+        const existingAppoiment = await appointmentModel.findOne({ date, timeBlock, dentist });
+        if (existingAppoiment) {
+            return res.status(400).json({ msg: "Ya existe una cita para ese bloque de tiempo." });
+        }
 
+        // Crear cita
+        const newAppoiment = await appointmentModel.create({ patient, dentist, date, timeBlock, reason });
+        res.status(201).json(newAppoiment);
 
-}
-
-
-const getAppoiment = async (req, res)=> {
-    try {
-        const data = await appointmentModel.find({})
-        res.status(201).json(data)
     } catch (error) {
-        console.error(error)
-        res.status(500).json({msg: 'error no se pudo obtener el listado de usuarios'})
+        console.error(error);
+        res.status(500).json({ msg: "Error al crear la cita." });
     }
+};
 
+// Obtener todas las citas
+const getAppoiment = async (req, res) => {
+    try {
+        const appoiments = await appointmentModel.find({})
+            .populate('patient', 'name email')
+            .populate('dentist', 'name email speciality');
 
+        res.status(200).json(appoiments);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Error al obtener las citas.' });
+    }
+};
 
-
-
-
-}
-
-
-// const updateAppoiment  =(req, res)=> {
-//     res.send( 'Actualizacion de las citas')
-// }
-
-
-const updateAllAppoiment = (req, res)=> {
-    res.send( 'Actualizacion total de todas las citas')
-}
-
-
-const deleteAppoiment =  (req, res)=> {
-    const appoimentId = req.params.id;
-    appointmentModel.findByIdAndDelete(appoimentId)
-        .then((deletedAppoiment) => {
-            if (!deletedAppoiment) {
-                return res.status(404).json({ msg: 'No se encontró la cita para eliminar' });
-            }
-            res.json({ msg: 'Cita eliminada exitosamente' });
-        })
-        .catch((error) => {
-            console.error(error);
-            res.status(500).json({ msg: "Error al eliminar la cita" });
-        });
-}
-
-
-
-
+// Obtener cita por ID
 const getAppoimentById = async (req, res) => {
+    const appoimentId = req.params.id;
+
     try {
-        const appoimentId = req.params.id;
-        const data = await appointmentModel.findById(appoimentId);
+        const appoiment = await appointmentModel.findById(appoimentId)
+            .populate('patient', 'name email')
+            .populate('dentist', 'name email speciality');
 
-
-        if (!data) {
-            return res.status(404).json({ msg: 'No se encontró la cita' });
+        if (!appoiment) {
+            return res.status(404).json({ msg: 'Cita no encontrada.' });
         }
-        res.json(data);
+
+        res.json(appoiment);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error al obtener la cita por id" });
+        res.status(500).json({ msg: "Error al obtener la cita por ID." });
     }
-}
+};
 
-
+// Actualizar cita por ID
 const updateAppoimentById = async (req, res) => {
+    const appoimentId = req.params.id;
+    const inputData = req.body;
+
     try {
-        const appoimentId = req.params.id;
-        const inputData = req.body;
-
-
         const updatedAppoiment = await appointmentModel.findByIdAndUpdate(appoimentId, inputData, { new: true });
-
-
         if (!updatedAppoiment) {
-            return res.status(404).json({ msg: 'No se encontró la cita para actualizar' });
+            return res.status(404).json({ msg: 'Cita no encontrada para actualizar.' });
         }
         res.json(updatedAppoiment);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error al actualizar la cita por id" });
+        res.status(500).json({ msg: "Error al actualizar la cita." });
     }
-}
+};
 
+// Actualizar todas las citas (ejemplo: resetear estado)
+const updateAllAppoiment = async (req, res) => {
+    try {
+        // Ejemplo: actualizar todas las citas a estado 'pendiente'
+        const result = await appointmentModel.updateMany({}, { status: 'pendiente' });
+        res.json({ msg: "Todas las citas actualizadas a estado 'pendiente'.", result });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error al actualizar todas las citas." });
+    }
+};
 
-// esta exportando las funcionalidas de este archvio usando el export
+// Eliminar cita por ID
+const deleteAppoiment = async (req, res) => {
+    const appoimentId = req.params.id;
+
+    try {
+        const deletedAppoiment = await appointmentModel.findByIdAndDelete(appoimentId);
+        if (!deletedAppoiment) {
+            return res.status(404).json({ msg: 'Cita no encontrada para eliminar.' });
+        }
+        res.json({ msg: 'Cita eliminada correctamente.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error al eliminar la cita." });
+    }
+};
+
 export {
     createAppoiment,
     getAppoiment,
-    updateAllAppoiment,
-    deleteAppoiment,
     getAppoimentById,
-    updateAppoimentById // <-- esta sí existe
-}
-
+    updateAppoimentById,
+    updateAllAppoiment, 
+    deleteAppoiment
+};
