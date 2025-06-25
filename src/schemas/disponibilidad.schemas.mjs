@@ -15,14 +15,14 @@ const disponibilidadSchema = new mongoose.Schema({
         type: String,                            // formato 'HH:mm'
         required: [true, "es obligatorio que se ponga la hora de inicio"]
     },
-    horaFin: {
-        type: String,                            // formato 'HH:mm'
-        required: true
-    },
-    activo: {
-        type: Boolean,
-        default: true
-    }
+    // horaFin: {
+    //     type: String,                            // formato 'HH:mm'
+    //     required: true
+    // },
+    // activo: {
+    //     type: Boolean,
+    //     default: true
+    // }
 }, {
     timestamps:true,
     versionKey: false

@@ -2,8 +2,10 @@ import mongoose from "mongoose";
 // define una funcion asincrona para definir la configuracion del ODM Mongoose para usar MongoDB
 async function dbConnect() {
     try {
-        await mongoose.connect('mongodb://localhost:27017/db-dentisapp', {}); // conectamis la base de datos y retorna la promesa
+        await mongoose.connect(process.env.dbConnect ??"mongodb://localhost:27017/db-dentisapp", {}); // conectamis la base de datos y retorna la promesa
             console.log('Base de datos conectada correctamente')
+            // await mongoose.connect(process.env.URL_MODELO_MONGO ??"mongodb://localhost:27017/db-dentisapp", {}); // conectamis la base de datos y retorna la promesa
+            // console.log('Base de datos conectada correctamente')
     } catch (error) {
         console.log(error);
         console.error('Error al conectarse a la base de datos')

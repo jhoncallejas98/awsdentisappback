@@ -9,7 +9,7 @@ const usersSchema = new mongoose.Schema({
         trim: true,
         lowercase: true,
         unique:[true, "el correo ya fue utilizado"],
-        requiered: [true, "El correo del usuario es obligatorio"],
+        required: [true, "El correo del usuario es obligatorio"],
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "introduce un correo electrónico válido."]
     },
     password: {

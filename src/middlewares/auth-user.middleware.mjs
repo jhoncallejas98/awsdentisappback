@@ -2,6 +2,7 @@ import { verifyToken } from '../helpers/jwt.helper.mjs';
 
 const authUser = (req, res, next) => {
     const token = req.header('X-Token'); // extraemos el token de la cabecera
+    console.log( token )
     if (!token) {
         return res.json({msg: "Error al obtener el token"})
     }

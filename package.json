@@ -5,7 +5,7 @@
   "main": "index.mjs",
   "type": "module",
   "scripts": {
-    "dev": "node --watch ./src/index.mjs"
+    "dev": "node --env-file .env --watch ./src/index.mjs"
   },
   "keywords": [
     "express",
@@ -20,6 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.0"
