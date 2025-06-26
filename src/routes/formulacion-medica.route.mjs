@@ -8,7 +8,6 @@ import {
     updateFormulacionMedicaById,
     removeFormulacionMedicaById
 } from '../controller/formulacion-medica.controller.mjs';
-import { authUser } from '../middlewares/auth-user.middleware.mjs';
 
 const router = express.Router();
 

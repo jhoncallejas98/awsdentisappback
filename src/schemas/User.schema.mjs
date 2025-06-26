@@ -9,18 +9,12 @@ const usersSchema = new mongoose.Schema({
         type: String,
         trim: true,
         lowercase: true,
-<<<<<<< HEAD
-        unique:[true, "el correo ya fue utilizado"],
-        required: [true, "El correo del usuario es obligatorio"],
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "introduce un correo electrónico válido."]
-=======
         unique: [true, "El correo ya fue utilizado"],
         required: [true, "El correo del usuario es obligatorio"],
         match: [
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             "Introduce un correo electrónico válido."
         ]
->>>>>>> e1a00966dda4babb1bb4c618f0f311a626555782
     },
     password: {
         type: String,
