@@ -8,7 +8,6 @@ const router = express.Router();
 //define las rutas para la entidad disponibilidad
 router.post("/api/disponibilidad",authUser,  createDiponibilidad );
 router.get("/api/disponibilidad",authUser,  getAllDisponibilidad );
-
 router.patch("/api/disponibilidad", updatedisponibilidadById)
 
 

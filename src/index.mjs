@@ -2,7 +2,6 @@
 //const express = require('express'); // CommonJS
 import express from 'express';  //ESModule
 
-import  cors from "cors"
 // import product from './routes/product.route.mjs'
 import disponibilidad from './routes/disponibilidad.router.mjs'
 import dbConnect from './config/mongo.config.mjs'; // importamos la conexion a la base de datos. 
@@ -11,14 +10,15 @@ import Users from './routes/users.route.mjs'
 import auth from './routes/auth.router.mjs'; // importamos la ruta de autenticacion
 import formulacionMedica from './routes/formulacion-medica.route.mjs'
 import historiaClinica from './routes/historia-clinica.route.mjs'
-
-
+import cors from 'cors'; // Importamos cors para permitir peticiones desde el frontend
+import todayRouter from './routes/todayPatients.route.mjs';
 // Paso 2: Ejecutar express
 const app = express();
 const PORT = process.env.PORT?? 3001;
 // app.use(product); // implementar la ruta como un Middleware de express
 
 app.use( express.json() );
+app.use(cors()); // Usamos cors para permitir peticiones desde el frontend
 
 // app.use(product); // implementar la ruta como un Middleware de express
 app.use(appoiment); // implementa la ruta de appoiment. 
@@ -28,8 +28,11 @@ app.use(auth); // implementamos autenticacion
 app.use(formulacionMedica);
 app.use(historiaClinica);
 
-app.use(cors() );
+
 //invocar la cofiguracion de la conexion a la base de datos. 
+
+app.use(todayRouter);//invocar la cofiguracion de la conexion a la base de datos. 
+
 dbConnect();
 
 

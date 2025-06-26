@@ -1,27 +1,27 @@
 import bcrypt from 'bcrypt';
 import userModel from '../schemas/User.schema.mjs';
-import { generateToken } from '../helpers/jwt.helper.mjs';
-// autenticación
+import { generateToken } from '../helpers/jwt.helper.mjs'; // asegúrate de tener este helper bien configurado
+
+// Iniciar sesión
 const userLogin = async (req, res) => {
-    // paso 1: obtener los datos del body
-    const inputData = req.body;
+    const { email, password } = req.body;
 
     try {
-        // paso 2: verificar si el usuario existe
-        const userFound = await userModel.findOne({ email: inputData.email });
+        // Verificar si el usuario existe
+        const userFound = await userModel.findOne({ email });
         if (!userFound) {
-            return res.status(404).json({ msg: 'Usuario no encontrado, por favor registrese' });
+            return res.status(404).json({ msg: 'Usuario no encontrado, por favor regístrese.' });
         }
 
-        // paso 3: verificar la contraseña
-        const isAuthenticate = bcrypt.compareSync(inputData.password, userFound.password);
-        if (!isAuthenticate) {
-            return res.status(401).json({ msg: 'Contraseña incorrecta, por favor intente de nuevo' });
+        // Comparar contraseñas
+        const isMatch = bcrypt.compareSync(password, userFound.password);
+        if (!isMatch) {
+            return res.status(401).json({ msg: 'Contraseña incorrecta.' });
         }
 
-        // paso 4: generar token (puedes usar JWT si quieres)
-        // por ahora solo devuelve mensaje simple
+        // Generar token
         const payload = {
+            id: userFound._id,
             name: userFound.name,
             email: userFound.email,
             role: userFound.role
@@ -29,28 +29,24 @@ const userLogin = async (req, res) => {
 
         const token = generateToken(payload);
 
+        // Limpiar datos sensibles
+        const userWithoutPassword = userFound.toObject();
+        delete userWithoutPassword.password;
 
-
-        // eliminar datos sensibles antes de enviar la respuesta
-        const objUser = userFound.toObject()
-        delete objUser.password
-        delete objUser.createdAt
-        delete objUser.updatedAt
-
-        // respuesta al cliente
-        res.json({ token: token, user: objUser });
+        // Responder
+        res.json({ token, user: userWithoutPassword });
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ msg: 'Error al intentar iniciar sesión' });
+        res.status(500).json({ msg: 'Error al iniciar sesión.' });
     }
 };
 
+// Renovar token
 const reNewToken = (req, res) => {
-    const payload = req.authUser;
+    const payload = req.authUser; // este debe venir de un middleware de verificación de JWT
     const token = generateToken(payload);
-    res.json({token})
-
+    res.json({ token });
 };
 
 export { userLogin, reNewToken };

@@ -1,89 +1,95 @@
 import historiaClinicaModel from "../schemas/historia-clinica.schemas.mjs";
 
+// Crear historia clínica
 const createHistoriaClinica = async (req, res) => {
-    const inputData = req.body;
-
     try {
-        // Paso 1: Verificar si ya existe una historia clínica para ese documento
-        const historiaExistente = await historiaClinicaModel.findOne({
-            documentId: inputData.documentId
-        });
+        const inputData = req.body;
+
+        // Verificar si ya existe historia con ese documento
+        const historiaExistente = await historiaClinicaModel.findOne({ documentId: inputData.documentId });
 
         if (historiaExistente) {
             return res.status(400).json({ msg: 'Ya existe una historia clínica registrada para este documento.' });
         }
 
-        // Paso 2: Crear la historia clínica
         const data = await historiaClinicaModel.create(inputData);
-
-        // Paso 3: Responder al cliente
         res.status(201).json(data);
-    } 
-    catch (error) {
+
+    } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: 'Error: No se pudo crear la historia clínica.' });
+        res.status(500).json({ msg: 'Error al crear la historia clínica.' });
     }
 };
 
+// Obtener todas las historias clínicas
 const getAllHistoriasClinicas = async (req, res) => {
     try {
-        const data = await historiaClinicaModel.find({});
-        res.json(data);
+        const data = await historiaClinicaModel.find({})
+            .populate('name', 'name email role'); // Poblamos info básica del usuario paciente
+
+        res.status(200).json(data);
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error: No se pudieron obtener las historias clínicas." });
+        res.status(500).json({ msg: "Error al obtener las historias clínicas." });
     }
 };
 
+// Obtener historia clínica por ID
 const getHistoriaClinicaById = async (req, res) => {
-    const historiaId = req.params.id;
-
     try {
-        const data = await historiaClinicaModel.findById(historiaId);
+        const id = req.params.id;
+        const data = await historiaClinicaModel.findById(id)
+            .populate('name', 'name email role');
 
         if (!data) {
-            return res.status(404).json({ msg: "La historia clínica no fue encontrada." });
+            return res.status(404).json({ msg: "Historia clínica no encontrada." });
         }
 
-        res.json(data);
+        res.status(200).json(data);
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error: No se pudo buscar la historia clínica." });
+        res.status(500).json({ msg: "Error al obtener la historia clínica." });
     }
 };
 
+// Actualizar historia clínica por ID
 const updateHistoriaClinicaById = async (req, res) => {
-    const historiaId = req.params.id;
-    const inputData = req.body;
-
     try {
-        const data = await historiaClinicaModel.findByIdAndUpdate(historiaId, inputData, { new: true });
+        const id = req.params.id;
+        const inputData = req.body;
+
+        const data = await historiaClinicaModel.findByIdAndUpdate(id, inputData, { new: true });
 
         if (!data) {
-            return res.status(404).json({ msg: "No se encontró la historia clínica para actualizar." });
+            return res.status(404).json({ msg: "Historia clínica no encontrada para actualizar." });
         }
 
-        res.json(data);
+        res.status(200).json(data);
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error: No se pudo actualizar la historia clínica." });
+        res.status(500).json({ msg: "Error al actualizar la historia clínica." });
     }
 };
 
+// Eliminar historia clínica por ID
 const removeHistoriaClinicaById = async (req, res) => {
-    const historiaId = req.params.id;
-
     try {
-        const data = await historiaClinicaModel.findByIdAndDelete(historiaId);
+        const id = req.params.id;
+
+        const data = await historiaClinicaModel.findByIdAndDelete(id);
 
         if (!data) {
-            return res.status(404).json({ msg: "No se encontró la historia clínica para eliminar." });
+            return res.status(404).json({ msg: "Historia clínica no encontrada para eliminar." });
         }
 
-        res.json({ msg: "Historia clínica eliminada correctamente", data });
+        res.status(200).json({ msg: "Historia clínica eliminada correctamente", data });
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error: No se pudo eliminar la historia clínica." });
+        res.status(500).json({ msg: "Error al eliminar la historia clínica." });
     }
 };
 
