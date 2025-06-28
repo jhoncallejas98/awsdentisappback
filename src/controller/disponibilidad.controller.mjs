@@ -3,7 +3,7 @@ import userModel from "../schemas/User.schema.mjs";
 
 // Crear disponibilidad
 const createDisponibilidad = async (req, res) => {
-    const { dentist, diaSemana, bloque, activo } = req.body;
+    const { dentist, diaSemana, horaInicio, activo } = req.body;
 
     try {
         // Validar si el odontólogo existe y es rol dentist
@@ -13,12 +13,12 @@ const createDisponibilidad = async (req, res) => {
         }
 
         // Validar si ya existe disponibilidad para ese odontólogo, día y bloque
-        const disponibilidadExistente = await disponibilidadModel.findOne({ dentist, diaSemana, bloque });
+        const disponibilidadExistente = await disponibilidadModel.findOne({ dentist, diaSemana, horaInicio, activo });
         if (disponibilidadExistente) {
             return res.status(400).json({ msg: "Ya existe esta disponibilidad para el odontólogo." });
         }
 
-        const nuevaDisponibilidad = await disponibilidadModel.create({ dentist, diaSemana, bloque, activo });
+        const nuevaDisponibilidad = await disponibilidadModel.create({ dentist, diaSemana, horaInicio, activo });
         res.status(201).json(nuevaDisponibilidad);
     } catch (error) {
         console.error(error);
@@ -30,7 +30,7 @@ const createDisponibilidad = async (req, res) => {
 const getAllDisponibilidad = async (req, res) => {
     try {
         const data = await disponibilidadModel.find({})
-            .populate('odontologoId', 'name email speciality');
+            .populate('dentist');
         res.status(200).json(data);
     } catch (error) {
         console.error(error);
