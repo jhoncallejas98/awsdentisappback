@@ -38,6 +38,16 @@ const getAllUsers = async (req, res) => {
     }
 };
 
+const getAllDentist = async (req, res) => {
+    try {
+        const data = await userModel.find({role: "dentist"})
+        res.json( data )
+    }
+    catch( error ) {
+        console.error( error )
+        res.json({msg: "no se pudo encontrar los usuarios dentinstas"})
+    }
+}
 // Obtener usuario por ID
 const getUsersById = async (req, res) => {
     const userId = req.params.id;
@@ -95,6 +105,7 @@ const removeUsersById = async (req, res) => {
 export {
     createUser,
     getAllUsers,
+    getAllDentist,
     getUsersById,
     updateUsersById,
     removeUsersById
