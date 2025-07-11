@@ -46,8 +46,8 @@ const getAllDisponibilidad = async (req, res) => {
         if (dentist) filter.dentist = dentist;
         let diaSemanaFinal = diaSemana;
         if (date) {
-            // Convertir la fecha a día de la semana (en español)
-            const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            // Convertir la fecha a día de la semana (en inglés)
+            const dias = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const fecha = new Date(date);
             diaSemanaFinal = dias[fecha.getDay()];
             filter.diaSemana = diaSemanaFinal;
