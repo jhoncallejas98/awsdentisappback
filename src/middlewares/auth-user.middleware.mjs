@@ -2,20 +2,27 @@ import { verifyToken } from '../helpers/jwt.helper.mjs';
 
 const authUser = (req, res, next) => {
     const token = req.header('X-Token'); // extraemos el token de la cabecera
-    console.log( token )
+    console.log('Token recibido:', token);
+    
     if (!token) {
-        return res.json({msg: "Error al obtener el token"})
+        console.log('No se encontró token en el header X-Token');
+        return res.status(401).json({msg: "Error al obtener el token - No se envió token en el header X-Token"});
     }
-    //verificamos el token
-    const payload = verifyToken(token);
-    delete payload.iat;
-    delete payload.exp;
+    
+    try {
+        //verificamos el token
+        const payload = verifyToken(token);
+        delete payload.iat;
+        delete payload.exp;
 
-
-    // crear una propiuedad en elonjeto request de express y guardar el payload x
-    req.authUser = payload;
-    console.log(payload)
-    next();
+        // crear una propiedad en el objeto request de express y guardar el payload
+        req.authUser = payload;
+        console.log('Token verificado correctamente:', payload);
+        next();
+    } catch (error) {
+        console.error('Error al verificar token:', error);
+        return res.status(401).json({msg: "Token inválido o expirado"});
+    }
 }
 
 export {
