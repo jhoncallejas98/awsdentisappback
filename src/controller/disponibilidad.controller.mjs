@@ -8,7 +8,10 @@ function isValidObjectId(id) {
 
 // Crear disponibilidad
 const createDisponibilidad = async (req, res) => {
-    const { dentist, diaSemana, horaInicio, horaFin, activo } = req.body;
+    const { dentist, diaSemana, horaInicio, horaFin, activo, bloquesDisponibles } = req.body;
+
+    console.log('Body completo recibido:', req.body);
+    console.log('Bloques disponibles:', bloquesDisponibles);
 
     try {
         let odontologo;
@@ -27,7 +30,7 @@ const createDisponibilidad = async (req, res) => {
             return res.status(400).json({ msg: "Ya existe esta disponibilidad para el odontólogo." });
         }
 
-        const nuevaDisponibilidad = await disponibilidadModel.create({ dentist, diaSemana, horaInicio, horaFin, activo });
+        const nuevaDisponibilidad = await disponibilidadModel.create({ dentist, diaSemana, horaInicio, horaFin, activo, bloquesDisponibles });
         res.status(201).json(nuevaDisponibilidad);
     } catch (error) {
         console.error(error);
