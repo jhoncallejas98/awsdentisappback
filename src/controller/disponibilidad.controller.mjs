@@ -42,9 +42,12 @@ const createDisponibilidad = async (req, res) => {
 const getAllDisponibilidad = async (req, res) => {
     try {
         const { dentist, dentistId, diaSemana, date } = req.query;
+        console.log('Parámetros recibidos:', { dentist, dentistId, diaSemana, date });
+        
         let filter = {};
         if (dentist) filter.dentist = dentist;
         if (dentistId) filter.dentist = dentistId; // Agregar soporte para dentistId
+        
         let diaSemanaFinal = diaSemana;
         if (date) {
             // Convertir la fecha a día de la semana (en inglés)
@@ -52,14 +55,22 @@ const getAllDisponibilidad = async (req, res) => {
             const fecha = new Date(date);
             diaSemanaFinal = dias[fecha.getDay()];
             filter.diaSemana = diaSemanaFinal;
+            console.log('Fecha recibida:', date);
             console.log('Día de la semana calculado:', diaSemanaFinal);
         } else if (diaSemana) {
             filter.diaSemana = diaSemana;
         }
-        console.log('Filtro aplicado:', filter);
+        
+        console.log('Filtro final aplicado:', filter);
+        
+        // Buscar sin filtro primero para ver qué hay
+        const todasLasDisponibilidades = await disponibilidadModel.find({});
+        console.log('Todas las disponibilidades en BD:', todasLasDisponibilidades.map(d => ({ dentist: d.dentist, diaSemana: d.diaSemana })));
+        
         const data = await disponibilidadModel.find(filter)
             .populate('dentist');
-        console.log('Disponibilidad encontrada:', data);
+        console.log('Disponibilidad encontrada con filtro:', data);
+        
         res.status(200).json(data);
     } catch (error) {
         console.error(error);
