@@ -40,42 +40,23 @@ const createDisponibilidad = async (req, res) => {
 
 // Obtener todas las disponibilidades
 const getAllDisponibilidad = async (req, res) => {
-    try {
-        const { dentist, dentistId, diaSemana, date } = req.query;
-        console.log('Parámetros recibidos:', { dentist, dentistId, diaSemana, date });
-        
-        let filter = {};
-        if (dentist) filter.dentist = dentist;
-        if (dentistId) filter.dentist = dentistId; // Agregar soporte para dentistId
-        
-        let diaSemanaFinal = diaSemana;
-        if (date) {
-            // Convertir la fecha a día de la semana (en español)
-            const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-            const fecha = new Date(date);
-            diaSemanaFinal = dias[fecha.getDay()];
-            filter.diaSemana = diaSemanaFinal;
-            console.log('Fecha recibida:', date);
-            console.log('Día de la semana calculado:', diaSemanaFinal);
-        } else if (diaSemana) {
-            filter.diaSemana = diaSemana;
-        }
-        
-        console.log('Filtro final aplicado:', filter);
-        
-        // Buscar sin filtro primero para ver qué hay
-        const todasLasDisponibilidades = await disponibilidadModel.find({});
-        console.log('Todas las disponibilidades en BD:', todasLasDisponibilidades.map(d => ({ dentist: d.dentist, diaSemana: d.diaSemana })));
-        
-        const data = await disponibilidadModel.find(filter)
-            .populate('dentist');
-        console.log('Disponibilidad encontrada con filtro:', data);
-        
-        res.status(200).json(data);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: "Error al obtener disponibilidades." });
-    }
+  try {
+    const { dentist, date, diaSemana } = req.query;
+    
+    console.log('Backend - Query recibido:', { dentist, date, diaSemana });
+    
+    const disponibilidad = await disponibilidadModel.findOne({
+      dentist: dentist,
+      diaSemana: diaSemana
+    });
+    
+    console.log('Backend - Disponibilidad encontrada:', disponibilidad);
+    
+    res.json(disponibilidad ? [disponibilidad] : []);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
 };
 
 // Actualizar disponibilidad por ID
