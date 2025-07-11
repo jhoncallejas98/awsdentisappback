@@ -4,11 +4,20 @@ import userModel from "../schemas/User.schema.mjs";
 // Crear una formulación médica
 const createFormulacionMedica = async (req, res) => {
     try {
-        const inputData = req.body;
-        
         console.log('=== CREAR FÓRMULA MÉDICA ===');
+        console.log('Headers recibidos:', req.headers);
+        console.log('Token recibido:', req.header('X-Token'));
+        console.log('Usuario autenticado:', req.authUser);
+        
+        const inputData = req.body;
         console.log('Body completo recibido:', JSON.stringify(inputData, null, 2));
         console.log('Campos recibidos:', Object.keys(inputData));
+        
+        // Verificar si req.authUser existe
+        if (!req.authUser) {
+            console.log('ERROR: req.authUser no existe');
+            return res.status(401).json({ msg: 'Usuario no autenticado' });
+        }
         
         // Obtener la cédula del dentista desde el token
         const cedulaDentista = req.authUser.cedula;
@@ -128,10 +137,26 @@ const removeFormulacionMedicaById = async (req, res) => {
     }
 };
 
+// Endpoint de prueba para fórmulas médicas
+const testFormulacionMedica = async (req, res) => {
+    console.log('=== PRUEBA FÓRMULA MÉDICA ===');
+    console.log('Headers:', req.headers);
+    console.log('Token:', req.header('X-Token'));
+    console.log('Usuario:', req.authUser);
+    console.log('Cédula:', req.authUser?.cedula);
+    
+    res.json({
+        msg: 'Prueba fórmula médica exitosa',
+        user: req.authUser,
+        cedula: req.authUser?.cedula
+    });
+};
+
 export {
     createFormulacionMedica,
     getAllFormulacionesMedicas,
     getFormulacionMedicaById,
     updateFormulacionMedicaById,
-    removeFormulacionMedicaById
+    removeFormulacionMedicaById,
+    testFormulacionMedica
 };

@@ -50,4 +50,17 @@ const reNewToken = (req, res) => {
     res.json({ token });
 };
 
-export { userLogin, reNewToken };
+// Endpoint de prueba para verificar autenticación
+const testAuth = (req, res) => {
+    console.log('=== PRUEBA DE AUTENTICACIÓN ===');
+    console.log('Usuario autenticado:', req.authUser);
+    console.log('Cédula del usuario:', req.authUser?.cedula);
+    
+    res.json({ 
+        msg: 'Autenticación exitosa',
+        user: req.authUser,
+        cedula: req.authUser?.cedula
+    });
+};
+
+export { userLogin, reNewToken, testAuth };
