@@ -41,9 +41,10 @@ const createDisponibilidad = async (req, res) => {
 // Obtener todas las disponibilidades
 const getAllDisponibilidad = async (req, res) => {
     try {
-        const { dentist, diaSemana, date } = req.query;
+        const { dentist, dentistId, diaSemana, date } = req.query;
         let filter = {};
         if (dentist) filter.dentist = dentist;
+        if (dentistId) filter.dentist = dentistId; // Agregar soporte para dentistId
         let diaSemanaFinal = diaSemana;
         if (date) {
             // Convertir la fecha a día de la semana (en inglés)
