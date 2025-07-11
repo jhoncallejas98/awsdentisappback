@@ -41,7 +41,14 @@ const createDisponibilidad = async (req, res) => {
 // Obtener todas las disponibilidades
 const getAllDisponibilidad = async (req, res) => {
     try {
-        const data = await disponibilidadModel.find({})
+        const { dentist, diaSemana } = req.query;
+        let filter = {};
+        if (dentist) filter.dentist = dentist;
+        if (diaSemana) filter.diaSemana = diaSemana;
+
+        console.log('Filtro aplicado:', filter);
+
+        const data = await disponibilidadModel.find(filter)
             .populate('dentist');
         res.status(200).json(data);
     } catch (error) {

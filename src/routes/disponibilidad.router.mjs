@@ -1,5 +1,5 @@
 import express from "express";
-import { createDisponibilidad, getAllDisponibilidad, updateDisponibilidadById } from "../controller/disponibilidad.controller.mjs";
+import { createDisponibilidad, getAllDisponibilidad, updateDisponibilidadById, deleteDisponibilidadById } from "../controller/disponibilidad.controller.mjs";
 import { authUser } from "../middlewares/auth-user.middleware.mjs";
 
 const router = express.Router();
@@ -8,6 +8,7 @@ const router = express.Router();
 router.post("/api/disponibilidad",  createDisponibilidad );
 router.get("/api/disponibilidad",  getAllDisponibilidad );
 router.patch("/api/disponibilidad", updateDisponibilidadById)
+router.delete("/api/disponibilidad/:id", deleteDisponibilidadById);
 
 
 export default router;
