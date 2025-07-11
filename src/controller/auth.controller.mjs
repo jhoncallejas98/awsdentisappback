@@ -24,7 +24,8 @@ const userLogin = async (req, res) => {
             id: userFound._id,
             name: userFound.name,
             email: userFound.email,
-            role: userFound.role
+            role: userFound.role,
+            cedula: userFound.cedula // Incluir la cédula en el token
         };
 
         const token = generateToken(payload);

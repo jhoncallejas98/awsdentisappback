@@ -10,8 +10,12 @@ const createFormulacionMedica = async (req, res) => {
         console.log('Body completo recibido:', JSON.stringify(inputData, null, 2));
         console.log('Campos recibidos:', Object.keys(inputData));
         
-        // Verificar campos requeridos
-        const camposRequeridos = ['cedulaPaciente', 'cedulaDentista', 'fecha', 'medicamento', 'dosis', 'frecuencia', 'duracionDias'];
+        // Obtener la cédula del dentista desde el token
+        const cedulaDentista = req.authUser.cedula;
+        console.log('Cédula del dentista desde token:', cedulaDentista);
+        
+        // Verificar campos requeridos (sin cedulaDentista ya que viene del token)
+        const camposRequeridos = ['cedulaPaciente', 'fecha', 'medicamento', 'dosis', 'frecuencia', 'duracionDias'];
         const camposFaltantes = camposRequeridos.filter(campo => !inputData[campo]);
         
         if (camposFaltantes.length > 0) {
@@ -22,7 +26,7 @@ const createFormulacionMedica = async (req, res) => {
             });
         }
         
-        // Buscar paciente y dentista por cédula
+        // Buscar paciente por cédula
         console.log('Buscando paciente con cédula:', inputData.cedulaPaciente);
         const paciente = await userModel.findOne({ cedula: inputData.cedulaPaciente, role: 'patient' });
         if (!paciente) {
@@ -31,8 +35,9 @@ const createFormulacionMedica = async (req, res) => {
         }
         console.log('Paciente encontrado:', paciente._id);
         
-        console.log('Buscando dentista con cédula:', inputData.cedulaDentista);
-        const dentista = await userModel.findOne({ cedula: inputData.cedulaDentista, role: 'dentist' });
+        // Buscar dentista por cédula del token
+        console.log('Buscando dentista con cédula del token:', cedulaDentista);
+        const dentista = await userModel.findOne({ cedula: cedulaDentista, role: 'dentist' });
         if (!dentista) {
             console.log('Dentista no encontrado');
             return res.status(400).json({ msg: 'Dentista no encontrado.' });
@@ -45,7 +50,7 @@ const createFormulacionMedica = async (req, res) => {
             patient: paciente._id,
             cedulaPaciente: paciente.cedula,
             dentist: dentista._id,
-            cedulaDentista: dentista.cedula
+            cedulaDentista: cedulaDentista // Usar la cédula del token
         };
         
         console.log('Datos a crear:', JSON.stringify(dataToCreate, null, 2));
