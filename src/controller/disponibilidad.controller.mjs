@@ -41,6 +41,15 @@ const createDisponibilidad = async (req, res) => {
 // Obtener todas las disponibilidades
 const getAllDisponibilidad = async (req, res) => {
   try {
+    // Si no hay parámetros, devolver todas las disponibilidades
+    if (!req.query.dentist && !req.query.date && !req.query.diaSemana) {
+      const todasDisponibilidades = await disponibilidadModel.find({}).populate('dentist');
+      console.log('Todas las disponibilidades:', todasDisponibilidades);
+      res.json(todasDisponibilidades);
+      return;
+    }
+    
+    // Si hay parámetros, buscar por filtros específicos
     const { dentist, date, diaSemana } = req.query;
     
     console.log('Backend - Query recibido:', { dentist, date, diaSemana });
