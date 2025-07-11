@@ -5,27 +5,57 @@ import userModel from "../schemas/User.schema.mjs";
 const createFormulacionMedica = async (req, res) => {
     try {
         const inputData = req.body;
+        
+        console.log('=== CREAR FÓRMULA MÉDICA ===');
+        console.log('Body completo recibido:', JSON.stringify(inputData, null, 2));
+        console.log('Campos recibidos:', Object.keys(inputData));
+        
+        // Verificar campos requeridos
+        const camposRequeridos = ['cedulaPaciente', 'cedulaDentista', 'fecha', 'medicamento', 'dosis', 'frecuencia', 'duracionDias'];
+        const camposFaltantes = camposRequeridos.filter(campo => !inputData[campo]);
+        
+        if (camposFaltantes.length > 0) {
+            console.log('Campos faltantes:', camposFaltantes);
+            return res.status(400).json({ 
+                msg: 'Campos requeridos faltantes', 
+                camposFaltantes: camposFaltantes 
+            });
+        }
+        
         // Buscar paciente y dentista por cédula
+        console.log('Buscando paciente con cédula:', inputData.cedulaPaciente);
         const paciente = await userModel.findOne({ cedula: inputData.cedulaPaciente, role: 'patient' });
         if (!paciente) {
+            console.log('Paciente no encontrado');
             return res.status(400).json({ msg: 'Paciente no encontrado.' });
         }
+        console.log('Paciente encontrado:', paciente._id);
+        
+        console.log('Buscando dentista con cédula:', inputData.cedulaDentista);
         const dentista = await userModel.findOne({ cedula: inputData.cedulaDentista, role: 'dentist' });
         if (!dentista) {
+            console.log('Dentista no encontrado');
             return res.status(400).json({ msg: 'Dentista no encontrado.' });
         }
+        console.log('Dentista encontrado:', dentista._id);
+        
         // Crear formulación médica usando _id y cédula
-        const data = await formulacionMedicaModel.create({
+        const dataToCreate = {
             ...inputData,
             patient: paciente._id,
             cedulaPaciente: paciente.cedula,
             dentist: dentista._id,
             cedulaDentista: dentista.cedula
-        });
+        };
+        
+        console.log('Datos a crear:', JSON.stringify(dataToCreate, null, 2));
+        
+        const data = await formulacionMedicaModel.create(dataToCreate);
+        console.log('Fórmula médica creada exitosamente:', data._id);
         res.status(201).json(data);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: "Error al crear la formulación médica." });
+        console.error('Error al crear fórmula médica:', error);
+        res.status(500).json({ msg: "Error al crear la formulación médica.", error: error.message });
     }
 };
 

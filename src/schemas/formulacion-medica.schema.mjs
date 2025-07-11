@@ -10,11 +10,7 @@ const formulacionMedicaSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    appointment: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'appointments',
-        required: true
-    },
+
     dentist: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
