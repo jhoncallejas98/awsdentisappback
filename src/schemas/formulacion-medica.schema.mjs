@@ -1,43 +1,51 @@
 import mongoose from "mongoose";
 
 const formulacionMedicaSchema = new mongoose.Schema({
-    patient: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true 
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    appointment: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'appointments', 
-        required: true 
+    cedulaPaciente: {
+        type: String,
+        required: true
     },
-    dentist: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true 
+    appointment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'appointments',
+        required: true
     },
-    fecha: { 
-        type: Date, 
-        required: true 
+    dentist: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    medicamento: { 
-        type: String, 
+    cedulaDentista: {
+        type: String,
+        required: true
+    },
+    fecha: {
+        type: Date,
+        required: true
+    },
+    medicamento: {
+        type: String,
         required: [true, "El nombre del medicamento es obligatorio"]
     },
-    dosis: { 
-        type: String, 
+    dosis: {
+        type: String,
         required: [true, "La dosis es obligatoria"]
     },
-    frecuencia: { 
-        type: String, 
-        required: [true, "La frecuencia es obligatoria"] 
-    }, 
-    duracionDias: { 
-        type: Number, 
-        required: [true, "La duración en días es obligatoria"] 
+    frecuencia: {
+        type: String,
+        required: [true, "La frecuencia es obligatoria"]
     },
-    instrucciones: { 
-        type: String 
+    duracionDias: {
+        type: Number,
+        required: [true, "La duración en días es obligatoria"]
+    },
+    instrucciones: {
+        type: String
     }
 }, { timestamps: true, versionKey: false });
 

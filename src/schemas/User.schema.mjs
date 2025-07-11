@@ -22,6 +22,11 @@ const usersSchema = new mongoose.Schema({
         minlength: [7, "La contraseña debe tener mínimo 7 caracteres"],
         required: [true, "La contraseña es obligatoria"]
     },
+    cedula: {
+        type: String,
+        unique: [true, "La cédula ya fue utilizada"],
+        required: [true, "La cédula es obligatoria"]
+    },
     role: {
         type: String,
         enum: ["patient", "dentist", "admin"],

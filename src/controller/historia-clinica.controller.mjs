@@ -1,20 +1,27 @@
 import historiaClinicaModel from "../schemas/historia-clinica.schemas.mjs";
+import userModel from "../schemas/User.schema.mjs";
 
 // Crear historia clínica
 const createHistoriaClinica = async (req, res) => {
     try {
         const inputData = req.body;
-
+        // Buscar paciente por cédula
+        const paciente = await userModel.findOne({ cedula: inputData.cedulaPaciente, role: 'patient' });
+        if (!paciente) {
+            return res.status(400).json({ msg: 'Paciente no encontrado.' });
+        }
         // Verificar si ya existe historia con ese documento
         const historiaExistente = await historiaClinicaModel.findOne({ documentId: inputData.documentId });
-
         if (historiaExistente) {
             return res.status(400).json({ msg: 'Ya existe una historia clínica registrada para este documento.' });
         }
-
-        const data = await historiaClinicaModel.create(inputData);
+        // Crear historia clínica usando _id y cédula
+        const data = await historiaClinicaModel.create({
+            ...inputData,
+            patient: paciente._id,
+            cedulaPaciente: paciente.cedula
+        });
         res.status(201).json(data);
-
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: 'Error al crear la historia clínica.' });
@@ -24,8 +31,7 @@ const createHistoriaClinica = async (req, res) => {
 // Obtener todas las historias clínicas
 const getAllHistoriasClinicas = async (req, res) => {
     try {
-        const data = await historiaClinicaModel.find({})
-            .populate('name', 'name email role'); // Poblamos info básica del usuario paciente
+        const data = await historiaClinicaModel.find({});
 
         res.status(200).json(data);
 
@@ -39,8 +45,7 @@ const getAllHistoriasClinicas = async (req, res) => {
 const getHistoriaClinicaById = async (req, res) => {
     try {
         const id = req.params.id;
-        const data = await historiaClinicaModel.findById(id)
-            .populate('name', 'name email role');
+        const data = await historiaClinicaModel.findById(id);
 
         if (!data) {
             return res.status(404).json({ msg: "Historia clínica no encontrada." });

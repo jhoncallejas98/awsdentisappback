@@ -6,9 +6,17 @@ const appointmentSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    cedulaPaciente: {
+        type: String,
+        required: true
+    },
     dentist: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        required: true
+    },
+    cedulaDentista: {
+        type: String,
         required: true
     },
     date: { 

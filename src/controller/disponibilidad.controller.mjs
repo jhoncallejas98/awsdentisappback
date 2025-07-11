@@ -1,13 +1,22 @@
 import disponibilidadModel from "../schemas/disponibilidad.schemas.mjs";
 import userModel from "../schemas/User.schema.mjs";
+import mongoose from "mongoose";
+
+function isValidObjectId(id) {
+    return typeof id === 'string' && id.match(/^[0-9a-fA-F]{24}$/);
+}
 
 // Crear disponibilidad
 const createDisponibilidad = async (req, res) => {
     const { dentist, diaSemana, horaInicio, activo } = req.body;
 
     try {
-        // Validar si el odontólogo existe y es rol dentist
-        const odontologo = await userModel.findOne({ _id: dentist, role: 'dentist' });
+        let odontologo;
+        if (isValidObjectId(dentist)) {
+            odontologo = await userModel.findOne({ _id: dentist, role: 'dentist' });
+        } else {
+            odontologo = await userModel.findOne({ cedula: dentist, role: 'dentist' });
+        }
         if (!odontologo) {
             return res.status(400).json({ msg: "Odontólogo no válido o no encontrado." });
         }

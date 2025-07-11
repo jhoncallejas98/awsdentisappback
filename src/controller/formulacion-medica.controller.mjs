@@ -1,13 +1,28 @@
 import formulacionMedicaModel from "../schemas/formulacion-medica.schema.mjs";
+import userModel from "../schemas/User.schema.mjs";
 
 // Crear una formulación médica
 const createFormulacionMedica = async (req, res) => {
     try {
         const inputData = req.body;
-
-        const data = await formulacionMedicaModel.create(inputData);
+        // Buscar paciente y dentista por cédula
+        const paciente = await userModel.findOne({ cedula: inputData.cedulaPaciente, role: 'patient' });
+        if (!paciente) {
+            return res.status(400).json({ msg: 'Paciente no encontrado.' });
+        }
+        const dentista = await userModel.findOne({ cedula: inputData.cedulaDentista, role: 'dentist' });
+        if (!dentista) {
+            return res.status(400).json({ msg: 'Dentista no encontrado.' });
+        }
+        // Crear formulación médica usando _id y cédula
+        const data = await formulacionMedicaModel.create({
+            ...inputData,
+            patient: paciente._id,
+            cedulaPaciente: paciente.cedula,
+            dentist: dentista._id,
+            cedulaDentista: dentista.cedula
+        });
         res.status(201).json(data);
-
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Error al crear la formulación médica." });
@@ -17,10 +32,7 @@ const createFormulacionMedica = async (req, res) => {
 // Obtener todas las formulaciones médicas
 const getAllFormulacionesMedicas = async (req, res) => {
     try {
-        const data = await formulacionMedicaModel.find({})
-            .populate('name', 'name email role') // Trae info del usuario relacionado
-            .populate('odontologoId', 'name email role'); // Trae info del odontólogo
-
+        const data = await formulacionMedicaModel.find({});
         res.status(200).json(data);
     } catch (error) {
         console.error(error);
@@ -32,16 +44,11 @@ const getAllFormulacionesMedicas = async (req, res) => {
 const getFormulacionMedicaById = async (req, res) => {
     try {
         const id = req.params.id;
-        const data = await formulacionMedicaModel.findById(id)
-            .populate('name', 'name email role')
-            .populate('odontologoId', 'name email role');
-
+        const data = await formulacionMedicaModel.findById(id);
         if (!data) {
             return res.status(404).json({ msg: "Formulación médica no encontrada." });
         }
-
         res.status(200).json(data);
-
     } catch (error) {
         console.error(error);
         res.status(500).json({ msg: "Error al obtener la formulación médica." });

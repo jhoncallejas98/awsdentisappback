@@ -1,19 +1,23 @@
 import mongoose from "mongoose";
 
 const historiaClinicaSchema = new mongoose.Schema({
-    patient: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true 
+    patient: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    cedulaPaciente: {
+        type: String,
+        required: true
     },
     documentId: { type: String, required: true },
     birthDate: { type: Date, required: true },
     age: { type: Number, required: true },
     email: { type: String },
-    gender: { 
-        type: String, 
-        enum: ["masculino", "femenino", "otro"], 
-        required: true 
+    gender: {
+        type: String,
+        enum: ["masculino", "femenino", "otro"],
+        required: true
     },
     ethnicGroup: { type: String },
     bloodType: { type: String },
