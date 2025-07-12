@@ -9,6 +9,26 @@ function isValidObjectId(id) {
 // Crear una nueva cita
 const createAppoiment = async (req, res) => {
     const { cedulaPaciente, cedulaDentista, patient, dentist, date, timeBlock, reason } = req.body;
+    
+    // Logs detallados para fechas
+    console.log('=== CREAR CITA - ANÁLISIS DE FECHAS ===');
+    console.log('Fecha recibida del frontend:', date);
+    console.log('Tipo de fecha recibida:', typeof date);
+    console.log('Fecha como string:', String(date));
+    
+    if (date) {
+        const fechaOriginal = new Date(date);
+        console.log('Fecha convertida a Date object:', fechaOriginal);
+        console.log('Fecha ISO string:', fechaOriginal.toISOString());
+        console.log('Fecha local string:', fechaOriginal.toString());
+        console.log('Zona horaria:', fechaOriginal.getTimezoneOffset());
+        console.log('Año:', fechaOriginal.getFullYear());
+        console.log('Mes:', fechaOriginal.getMonth() + 1);
+        console.log('Día:', fechaOriginal.getDate());
+        console.log('Hora:', fechaOriginal.getHours());
+        console.log('Minutos:', fechaOriginal.getMinutes());
+    }
+    
     try {
         // Buscar paciente por _id o cédula
         let patientFound;
@@ -38,8 +58,20 @@ const createAppoiment = async (req, res) => {
         if (!dentistFound) {
             return res.status(400).json({ msg: "Dentista no encontrado." });
         }
+        
+        // Procesar la fecha antes de guardar
+        let fechaProcesada = date;
+        if (date) {
+            // Si la fecha viene como string, convertirla a Date object
+            if (typeof date === 'string') {
+                fechaProcesada = new Date(date);
+                console.log('Fecha procesada para guardar:', fechaProcesada);
+                console.log('Fecha procesada ISO:', fechaProcesada.toISOString());
+            }
+        }
+        
         // Verificar si ya existe cita en ese bloque y fecha para ese dentista
-        const existingAppoiment = await appointmentModel.findOne({ date, timeBlock, dentist: dentistFound._id });
+        const existingAppoiment = await appointmentModel.findOne({ date: fechaProcesada, timeBlock, dentist: dentistFound._id });
         if (existingAppoiment) {
             return res.status(400).json({ msg: "Ya existe una cita para ese bloque de tiempo." });
         }
@@ -49,13 +81,17 @@ const createAppoiment = async (req, res) => {
             cedulaPaciente: patientFound.cedula,
             dentist: dentistFound._id,
             cedulaDentista: dentistFound.cedula,
-            date,
+            date: fechaProcesada,
             timeBlock,
             reason
         });
+        
+        console.log('Cita creada exitosamente con fecha:', newAppoiment.date);
+        console.log('Cita fecha ISO:', newAppoiment.date.toISOString());
+        
         res.status(201).json(newAppoiment);
     } catch (error) {
-        console.error(error);
+        console.error('Error al crear cita:', error);
         res.status(500).json({ msg: "Error al crear la cita." });
     }
 };
@@ -151,11 +187,106 @@ const deleteAppoiment = async (req, res) => {
     }
 };
 
+// Endpoint de prueba para fechas
+const testDates = async (req, res) => {
+    console.log('=== PRUEBA DE FECHAS ===');
+    console.log('Body completo:', req.body);
+    console.log('Query params:', req.query);
+    
+    const { date, fecha, fechaInicio, fechaFin } = req.body;
+    
+    console.log('Fechas recibidas en body:');
+    console.log('- date:', date, 'tipo:', typeof date);
+    console.log('- fecha:', fecha, 'tipo:', typeof fecha);
+    console.log('- fechaInicio:', fechaInicio, 'tipo:', typeof fechaInicio);
+    console.log('- fechaFin:', fechaFin, 'tipo:', typeof fechaFin);
+    
+    // Procesar cada fecha
+    const processedDates = {};
+    
+    if (date) {
+        const originalDate = new Date(date);
+        processedDates.date = {
+            original: date,
+            type: typeof date,
+            asDate: originalDate,
+            iso: originalDate.toISOString(),
+            local: originalDate.toString(),
+            timezone: originalDate.getTimezoneOffset(),
+            year: originalDate.getFullYear(),
+            month: originalDate.getMonth() + 1,
+            day: originalDate.getDate(),
+            hours: originalDate.getHours(),
+            minutes: originalDate.getMinutes()
+        };
+    }
+    
+    if (fecha) {
+        const originalDate = new Date(fecha);
+        processedDates.fecha = {
+            original: fecha,
+            type: typeof fecha,
+            asDate: originalDate,
+            iso: originalDate.toISOString(),
+            local: originalDate.toString(),
+            timezone: originalDate.getTimezoneOffset(),
+            year: originalDate.getFullYear(),
+            month: originalDate.getMonth() + 1,
+            day: originalDate.getDate(),
+            hours: originalDate.getHours(),
+            minutes: originalDate.getMinutes()
+        };
+    }
+    
+    if (fechaInicio) {
+        const originalDate = new Date(fechaInicio);
+        processedDates.fechaInicio = {
+            original: fechaInicio,
+            type: typeof fechaInicio,
+            asDate: originalDate,
+            iso: originalDate.toISOString(),
+            local: originalDate.toString(),
+            timezone: originalDate.getTimezoneOffset(),
+            year: originalDate.getFullYear(),
+            month: originalDate.getMonth() + 1,
+            day: originalDate.getDate(),
+            hours: originalDate.getHours(),
+            minutes: originalDate.getMinutes()
+        };
+    }
+    
+    if (fechaFin) {
+        const originalDate = new Date(fechaFin);
+        processedDates.fechaFin = {
+            original: fechaFin,
+            type: typeof fechaFin,
+            asDate: originalDate,
+            iso: originalDate.toISOString(),
+            local: originalDate.toString(),
+            timezone: originalDate.getTimezoneOffset(),
+            year: originalDate.getFullYear(),
+            month: originalDate.getMonth() + 1,
+            day: originalDate.getDate(),
+            hours: originalDate.getHours(),
+            minutes: originalDate.getMinutes()
+        };
+    }
+    
+    res.json({
+        message: 'Prueba de fechas completada',
+        received: { date, fecha, fechaInicio, fechaFin },
+        processed: processedDates,
+        serverTime: new Date().toISOString(),
+        serverTimezone: new Date().getTimezoneOffset()
+    });
+};
+
 export {
     createAppoiment,
     getAppoiment,
     getAppoimentById,
     updateAppoimentById,
     updateAllAppoiment, 
-    deleteAppoiment
+    deleteAppoiment,
+    testDates
 };

@@ -13,6 +13,25 @@ const createFormulacionMedica = async (req, res) => {
         console.log('Body completo recibido:', JSON.stringify(inputData, null, 2));
         console.log('Campos recibidos:', Object.keys(inputData));
         
+        // Logs detallados para fechas
+        console.log('=== ANÁLISIS DE FECHAS - FÓRMULA MÉDICA ===');
+        console.log('Fecha recibida del frontend:', inputData.fecha);
+        console.log('Tipo de fecha recibida:', typeof inputData.fecha);
+        console.log('Fecha como string:', String(inputData.fecha));
+        
+        if (inputData.fecha) {
+            const fechaOriginal = new Date(inputData.fecha);
+            console.log('Fecha convertida a Date object:', fechaOriginal);
+            console.log('Fecha ISO string:', fechaOriginal.toISOString());
+            console.log('Fecha local string:', fechaOriginal.toString());
+            console.log('Zona horaria:', fechaOriginal.getTimezoneOffset());
+            console.log('Año:', fechaOriginal.getFullYear());
+            console.log('Mes:', fechaOriginal.getMonth() + 1);
+            console.log('Día:', fechaOriginal.getDate());
+            console.log('Hora:', fechaOriginal.getHours());
+            console.log('Minutos:', fechaOriginal.getMinutes());
+        }
+        
         // Verificar si req.authUser existe
         if (!req.authUser) {
             console.log('ERROR: req.authUser no existe');
@@ -53,9 +72,21 @@ const createFormulacionMedica = async (req, res) => {
         }
         console.log('Dentista encontrado:', dentista._id);
         
+        // Procesar la fecha antes de guardar
+        let fechaProcesada = inputData.fecha;
+        if (inputData.fecha) {
+            // Si la fecha viene como string, convertirla a Date object
+            if (typeof inputData.fecha === 'string') {
+                fechaProcesada = new Date(inputData.fecha);
+                console.log('Fecha procesada para guardar:', fechaProcesada);
+                console.log('Fecha procesada ISO:', fechaProcesada.toISOString());
+            }
+        }
+        
         // Crear formulación médica usando _id y cédula
         const dataToCreate = {
             ...inputData,
+            fecha: fechaProcesada,
             patient: paciente._id,
             cedulaPaciente: paciente.cedula,
             dentist: dentista._id,
@@ -66,6 +97,8 @@ const createFormulacionMedica = async (req, res) => {
         
         const data = await formulacionMedicaModel.create(dataToCreate);
         console.log('Fórmula médica creada exitosamente:', data._id);
+        console.log('Fórmula fecha guardada:', data.fecha);
+        console.log('Fórmula fecha ISO:', data.fecha.toISOString());
         res.status(201).json(data);
     } catch (error) {
         console.error('Error al crear fórmula médica:', error);

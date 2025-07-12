@@ -13,6 +13,35 @@ const createIncapacidadMedica = async (req, res) => {
         console.log('Body completo recibido:', JSON.stringify(inputData, null, 2));
         console.log('Campos recibidos:', Object.keys(inputData));
         
+        // Logs detallados para fechas
+        console.log('=== ANÁLISIS DE FECHAS - INCAPACIDAD MÉDICA ===');
+        console.log('Fecha inicio recibida del frontend:', inputData.fechaInicio);
+        console.log('Fecha fin recibida del frontend:', inputData.fechaFin);
+        console.log('Tipo de fecha inicio:', typeof inputData.fechaInicio);
+        console.log('Tipo de fecha fin:', typeof inputData.fechaFin);
+        
+        if (inputData.fechaInicio) {
+            const fechaInicioOriginal = new Date(inputData.fechaInicio);
+            console.log('Fecha inicio convertida a Date object:', fechaInicioOriginal);
+            console.log('Fecha inicio ISO string:', fechaInicioOriginal.toISOString());
+            console.log('Fecha inicio local string:', fechaInicioOriginal.toString());
+            console.log('Zona horaria inicio:', fechaInicioOriginal.getTimezoneOffset());
+            console.log('Año inicio:', fechaInicioOriginal.getFullYear());
+            console.log('Mes inicio:', fechaInicioOriginal.getMonth() + 1);
+            console.log('Día inicio:', fechaInicioOriginal.getDate());
+        }
+        
+        if (inputData.fechaFin) {
+            const fechaFinOriginal = new Date(inputData.fechaFin);
+            console.log('Fecha fin convertida a Date object:', fechaFinOriginal);
+            console.log('Fecha fin ISO string:', fechaFinOriginal.toISOString());
+            console.log('Fecha fin local string:', fechaFinOriginal.toString());
+            console.log('Zona horaria fin:', fechaFinOriginal.getTimezoneOffset());
+            console.log('Año fin:', fechaFinOriginal.getFullYear());
+            console.log('Mes fin:', fechaFinOriginal.getMonth() + 1);
+            console.log('Día fin:', fechaFinOriginal.getDate());
+        }
+        
         // Verificar si req.authUser existe
         if (!req.authUser) {
             console.log('ERROR: req.authUser no existe');
@@ -53,9 +82,31 @@ const createIncapacidadMedica = async (req, res) => {
         }
         console.log('Dentista encontrado:', dentista._id);
         
+        // Procesar las fechas antes de guardar
+        let fechaInicioProcesada = inputData.fechaInicio;
+        let fechaFinProcesada = inputData.fechaFin;
+        
+        if (inputData.fechaInicio) {
+            if (typeof inputData.fechaInicio === 'string') {
+                fechaInicioProcesada = new Date(inputData.fechaInicio);
+                console.log('Fecha inicio procesada para guardar:', fechaInicioProcesada);
+                console.log('Fecha inicio procesada ISO:', fechaInicioProcesada.toISOString());
+            }
+        }
+        
+        if (inputData.fechaFin) {
+            if (typeof inputData.fechaFin === 'string') {
+                fechaFinProcesada = new Date(inputData.fechaFin);
+                console.log('Fecha fin procesada para guardar:', fechaFinProcesada);
+                console.log('Fecha fin procesada ISO:', fechaFinProcesada.toISOString());
+            }
+        }
+        
         // Crear incapacidad médica usando _id y cédula
         const dataToCreate = {
             ...inputData,
+            fechaInicio: fechaInicioProcesada,
+            fechaFin: fechaFinProcesada,
             patient: paciente._id,
             cedulaPaciente: paciente.cedula,
             dentist: dentista._id,
@@ -66,6 +117,10 @@ const createIncapacidadMedica = async (req, res) => {
         
         const data = await incapacidadMedicaModel.create(dataToCreate);
         console.log('Incapacidad médica creada exitosamente:', data._id);
+        console.log('Incapacidad fecha inicio guardada:', data.fechaInicio);
+        console.log('Incapacidad fecha fin guardada:', data.fechaFin);
+        console.log('Incapacidad fecha inicio ISO:', data.fechaInicio.toISOString());
+        console.log('Incapacidad fecha fin ISO:', data.fechaFin.toISOString());
         res.status(201).json(data);
     } catch (error) {
         console.error('Error al crear incapacidad médica:', error);
