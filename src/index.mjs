@@ -10,6 +10,7 @@ import Users from './routes/users.route.mjs'
 import auth from './routes/auth.router.mjs'; // importamos la ruta de autenticacion
 import formulacionMedica from './routes/formulacion-medica.route.mjs'
 import historiaClinica from './routes/historia-clinica.route.mjs'
+import incapacidadMedica from './routes/incapacidad-medica.route.mjs'
 import cors from 'cors'; // Importamos cors para permitir peticiones desde el frontend
 import todayRouter from './routes/todayPatients.route.mjs';
 // Paso 2: Ejecutar express
@@ -27,6 +28,7 @@ app.use(Users) // implementamos usuarios
 app.use(auth); // implementamos autenticacion
 app.use(formulacionMedica);
 app.use(historiaClinica);
+app.use(incapacidadMedica);
 
 
 //invocar la cofiguracion de la conexion a la base de datos. 
