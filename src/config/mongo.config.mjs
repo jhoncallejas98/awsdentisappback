@@ -16,12 +16,11 @@ async function dbConnect() {
         console.log('URL de conexión:', connectionUrl.replace(/\/\/.*@/, '//***:***@')); // Ocultar credenciales en logs
         
         await mongoose.connect(connectionUrl, {
-            // Opciones de conexión recomendadas para MongoDB Atlas
+            // Opciones de conexión actualizadas para MongoDB Atlas
             maxPoolSize: 10, // Máximo número de conexiones en el pool
             serverSelectionTimeoutMS: 5000, // Timeout para selección de servidor
             socketTimeoutMS: 45000, // Timeout para operaciones de socket
-            bufferMaxEntries: 0, // Deshabilitar buffering
-            bufferCommands: false // Deshabilitar buffering de comandos
+            // Opciones removidas: bufferMaxEntries y bufferCommands ya no son soportadas
         });
 
         console.log('✅ Base de datos MongoDB Atlas conectada correctamente');
