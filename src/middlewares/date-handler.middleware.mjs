@@ -1,6 +1,5 @@
 // Middleware para manejar fechas y evitar problemas de zona horaria
 const handleDates = (req, res, next) => {
-    console.log('=== MIDDLEWARE DE MANEJO DE FECHAS ===');
     
     // Función para procesar una fecha
     const processDate = (dateValue, fieldName) => {
@@ -57,7 +56,6 @@ const handleDates = (req, res, next) => {
         });
     }
     
-    console.log('=== FIN MIDDLEWARE DE FECHAS ===');
     next();
 };
 
