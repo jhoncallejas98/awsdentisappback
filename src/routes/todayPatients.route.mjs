@@ -5,7 +5,7 @@ import {
     getTodayPatientById,
     updateTodayPatientById,
     removeTodayPatientById
-} from "../controller/TodayPatients.controllers.mjs";
+} from "../controller/todayPatients.controllers.mjs";
 import { authUser } from "../middlewares/auth-user.middleware.mjs";
 
 const router = Router();
