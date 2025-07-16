@@ -1,4 +1,4 @@
-import todayPatientsModel from "../schemas/todayPatients.Schema.mjs";
+import todayPatientsModel from "../schemas/todayPatients.schema.mjs";
 
 // Crear un nuevo paciente de hoy
 const createTodayPatient = async (req, res) => {
