@@ -34,6 +34,9 @@ app.use(formulacionMedica);
 app.use(historiaClinica);
 app.use(incapacidadMedica);
 
+app.get('/', (req, res) => {
+  res.send('API de Dentisapp funcionando 🚀');
+});
 
 //invocar la cofiguracion de la conexion a la base de datos. 
 
