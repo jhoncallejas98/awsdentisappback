@@ -2,13 +2,13 @@
   "name": "dentisapp-backend",
   "version": "1.0.0",
   "description": "Rest API para web de Dentisapp",
-  "main": "index.mjs",
+  "main": "src/index.mjs",
   "type": "module",
   "scripts": {
     "dev": "node --env-file .env --watch ./src/index.mjs",
-    "start": "node --env-file .env ./src/index.mjs",
+    "start": "node ./src/index.mjs",
     "test-connection": "node --env-file .env test-connection.mjs",
-    "prod": "NODE_ENV=production node --env-file .env ./src/index.mjs"
+    "prod": "NODE_ENV=production node ./src/index.mjs"
   },
   "keywords": [
     "express",
