@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env.JWT_SECRET;
+console.log('JWT_SECRET:', JWT_SECRET); // DEPURACIÓN: Verificar valor de la variable de entorno
 
 
 const generateToken = (payload) => {
