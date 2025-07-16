@@ -15,11 +15,15 @@ import cors from 'cors'; // Importamos cors para permitir peticiones desde el fr
 import todayRouter from './routes/todayPatients.route.mjs';
 // Paso 2: Ejecutar express
 const app = express();
-const PORT = process.env.PORT?? 3001;
+const PORT = process.env.PORT || 3000;
 // app.use(product); // implementar la ruta como un Middleware de express
 
 app.use( express.json() );
-app.use(cors()); // Usamos cors para permitir peticiones desde el frontend
+app.use(cors({
+  origin: ['https://dentisapp.vercel.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+})); // Usamos cors para permitir peticiones solo desde el frontend real
 
 // app.use(product); // implementar la ruta como un Middleware de express
 app.use(appoiment); // implementa la ruta de appoiment. 
@@ -41,5 +45,5 @@ dbConnect();
 
 // Paso 4: Lanzar el servidor web en el puerto 3000
 app.listen(PORT, () => {
-    console.log(`Servidor lanzado exitosamente ;)   http://localhost:${ PORT }`);
+    console.log(`Servidor lanzado exitosamente ;)   http://localhost:${PORT}`);
 });
