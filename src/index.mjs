@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use( express.json() );
 app.use(cors({
-  origin: ['https://dentisapp-frontend2.vercel.app'],
+  origin: ['http://localhost:4200','https://dentisapp-frontend2.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 })); // Usamos cors para permitir peticiones solo desde el frontend real
