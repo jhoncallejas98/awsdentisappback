@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 // app.use(product); // implementar la ruta como un Middleware de express
 
 app.use( express.json() );
-app.use(cors()); // Usamos cors para permitir peticiones solo desde el frontend real
+app.use(cors()); 
 
 // app.use(product); // implementar la ruta como un Middleware de express
 app.use(appoiment); // implementa la ruta de appoiment. 
