@@ -47,6 +47,6 @@ dbConnect();
 
 
 // Paso 4: Lanzar el servidor web en el puerto 3000
-app.listen(PORT, () => {
-    console.log(`Servidor lanzado exitosamente ;)   http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor lanzado exitosamente en http://0.0.0.0:${PORT}`);
 });
