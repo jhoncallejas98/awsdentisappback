@@ -19,7 +19,16 @@ const PORT = process.env.PORT || 3000;
 // app.use(product); // implementar la ruta como un Middleware de express
 
 app.use( express.json() );
-app.use(cors()); 
+const corsOptions = {
+  origin: ['http://localhost:4200', 'https://dentisapp-frontend2.vercel.app'], // añade los que necesites
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); 
+
 
 // app.use(product); // implementar la ruta como un Middleware de express
 app.use(appoiment); // implementa la ruta de appoiment. 
